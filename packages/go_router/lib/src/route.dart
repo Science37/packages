@@ -145,10 +145,15 @@ abstract class RouteBase with Diagnosticable {
   const RouteBase._({
     required this.routes,
     required this.parentNavigatorKey,
+    this.onExit,
   });
 
   /// The list of child routes associated with this route.
   final List<RouteBase> routes;
+
+  // An optional callback to be called during the exit from a route to another.
+  // Gives the chance to cancel the exit.
+  final Future<bool> Function(BuildContext context)? onExit;
 
   /// An optional key specifying which Navigator to display this route's screen
   /// onto.
@@ -202,6 +207,7 @@ class GoRoute extends RouteBase {
     super.parentNavigatorKey,
     this.redirect,
     super.routes = const <RouteBase>[],
+    super.onExit,
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
         assert(pageBuilder != null || builder != null || redirect != null,
